@@ -1,6 +1,5 @@
 package com.github.th.clientsapi.dto;
 
-import com.github.th.clientsapi.entity.Contact;
 import lombok.Data;
 
 import java.util.List;

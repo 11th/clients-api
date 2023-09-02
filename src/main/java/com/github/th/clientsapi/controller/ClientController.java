@@ -3,7 +3,6 @@ package com.github.th.clientsapi.controller;
 import com.github.th.clientsapi.dto.ClientDto;
 import com.github.th.clientsapi.dto.ClientWithContactsDto;
 import com.github.th.clientsapi.dto.ContactDto;
-import com.github.th.clientsapi.entity.ContactType;
 import com.github.th.clientsapi.service.ClientService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
