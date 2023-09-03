@@ -69,10 +69,10 @@ public class ClientService {
 
     public Collection<ContactDto> findClientContacts(long id, String type) {
         Client client = getClientOrThrowException(id);
-        ContactType contactType = getContactTypeOrThrowException(type);
-        if (contactType == null) {
+        if (type == null) {
             return clientMapper.toContactsList(client);
         }
+        ContactType contactType = getContactTypeOrThrowException(type);
         switch (contactType) {
             case PHONE -> {
                 return clientMapper.toPhonesList(client);
