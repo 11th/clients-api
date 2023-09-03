@@ -35,7 +35,8 @@ public class ClientController {
     @Operation(summary = "Add new client", responses = {
             @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(
                     implementation = ClientDto.class), mediaType = MediaType.APPLICATION_JSON_VALUE)}),
-            @ApiResponse(responseCode = "400", content = {@Content(schema = @Schema())})})
+            @ApiResponse(responseCode = "400", content = {@Content(schema = @Schema())})
+    })
     public ResponseEntity<ClientDto> addClient(@Valid @RequestBody ClientDto clientDto) {
         return ResponseEntity.ok(clientService.addClient(clientDto));
     }
@@ -44,7 +45,9 @@ public class ClientController {
     @Operation(summary = "Add new contact for client", responses = {
             @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(
                     implementation = ContactDto.class), mediaType = MediaType.APPLICATION_JSON_VALUE)}),
-            @ApiResponse(responseCode = "400", content = {@Content(schema = @Schema())})})
+            @ApiResponse(responseCode = "400", content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema())})
+    })
     public ResponseEntity<ContactDto> addContact(@NotNull @PathVariable("id") Long id,
                                                  @Valid @RequestBody ContactDto contact) {
         return ResponseEntity.ok(clientService.addContact(id, contact));
@@ -54,7 +57,8 @@ public class ClientController {
     @Operation(summary = "Find all clients", responses = {
             @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(
                     implementation = Page.class), mediaType = MediaType.APPLICATION_JSON_VALUE)}),
-            @ApiResponse(responseCode = "400", content = {@Content(schema = @Schema())})})
+            @ApiResponse(responseCode = "400", content = {@Content(schema = @Schema())})
+    })
     public ResponseEntity<Page<ClientDto>> findClients(@RequestParam("offset") @Min(0) Integer offset,
                                                        @RequestParam("limit") @Min(1) @Max(50) Integer limit) {
         return ResponseEntity.ok(clientService.findClients(PageRequest.of(offset, limit)));
@@ -64,7 +68,9 @@ public class ClientController {
     @Operation(summary = "Find client by ID", responses = {
             @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(
                     implementation = ClientWithContactsDto.class), mediaType = MediaType.APPLICATION_JSON_VALUE)}),
-            @ApiResponse(responseCode = "400", content = {@Content(schema = @Schema())})})
+            @ApiResponse(responseCode = "400", content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema())})
+    })
     public ResponseEntity<ClientWithContactsDto> findClient(@NotNull @PathVariable("id") Long id) {
         return ResponseEntity.ok(clientService.findClient(id));
     }
@@ -73,7 +79,9 @@ public class ClientController {
     @Operation(summary = "Find contacts of client", responses = {
             @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(
                     implementation = ContactDto.class), mediaType = MediaType.APPLICATION_JSON_VALUE)}),
-            @ApiResponse(responseCode = "400", content = {@Content(schema = @Schema())})})
+            @ApiResponse(responseCode = "400", content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema())})
+    })
     public ResponseEntity<Collection<ContactDto>> findClientContacts(@NotNull @PathVariable("id") Long id,
                                                                      @RequestParam(value = "type", required = false) String type) {
         return ResponseEntity.ok(clientService.findClientContacts(id, type));
