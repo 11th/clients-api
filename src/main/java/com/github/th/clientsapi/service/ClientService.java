@@ -6,21 +6,21 @@ import com.github.th.clientsapi.dto.ContactDto;
 import com.github.th.clientsapi.entity.*;
 import com.github.th.clientsapi.exception.ClientNotFoundException;
 import com.github.th.clientsapi.exception.ContactNotDeterminedException;
+import com.github.th.clientsapi.exception.ContactNotValidException;
 import com.github.th.clientsapi.exception.InvalidContactTypeException;
 import com.github.th.clientsapi.mapper.ClientMapper;
 import com.github.th.clientsapi.mapper.ContactMapper;
 import com.github.th.clientsapi.repository.ClientRepository;
 import com.github.th.clientsapi.repository.ContactRepository;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.regex.Pattern;
 
-@Slf4j
 @Service
 @AllArgsConstructor
 public class ClientService {
@@ -47,21 +47,19 @@ public class ClientService {
         ContactType contactType = getContactTypeOrThrowException(contactDto.getContactType());
         switch (contactType) {
             case PHONE -> {
+                validatePhone(contactDto.getValue());
                 return contactMapper.toPhone(contactDto, client);
             }
             case EMAIL -> {
+                validateEmail(contactDto.getValue());
                 return contactMapper.toEmail(contactDto, client);
             }
         }
         throw new ContactNotDeterminedException("Contact not determined");
     }
 
-    //todo: добавить пагинацию
-    public Collection<ClientDto> findClients() {
-        List<ClientDto> clients = new ArrayList<>();
-        clientRepository.findAll()
-                .forEach(c -> clients.add(clientMapper.toClientDto(c)));
-        return clients;
+    public Page<ClientDto> findClients(PageRequest pageRequest) {
+        return clientRepository.findAll(pageRequest).map(clientMapper::toClientDto);
     }
 
     public ClientWithContactsDto findClient(long id) {
@@ -96,5 +94,19 @@ public class ClientService {
     private ContactType getContactTypeOrThrowException(String value) {
         return ContactType.fromValue(value)
                 .orElseThrow(() -> new InvalidContactTypeException(String.format("Contact Type %s is invalid", value)));
+    }
+
+    private void validatePhone(String phone) {
+        String regexPattern = "^((\\+7|7|8)+([0-9]){10})$";
+        if (!Pattern.compile(regexPattern).matcher(phone).matches()) {
+            throw new ContactNotValidException(String.format("Phone %s is not valid", phone));
+        }
+    }
+
+    private void validateEmail(String email) {
+        String regexPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}$";
+        if (!Pattern.compile(regexPattern).matcher(email).matches()) {
+            throw new ContactNotValidException(String.format("Email %s is not valid", email));
+        }
     }
 }
