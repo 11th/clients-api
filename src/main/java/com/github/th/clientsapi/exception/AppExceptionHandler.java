@@ -45,7 +45,7 @@ public class AppExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ValidationErrorResponse onConstraintValidationException(ConstraintViolationException e) {
-        log.info(e.getMessage());
+        log.error(e.getMessage());
         List<Violation> violations = e.getConstraintViolations().stream()
                 .map(violation -> new Violation(
                         violation.getPropertyPath().toString(),
@@ -58,7 +58,7 @@ public class AppExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ValidationErrorResponse onMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        log.info(e.getMessage());
+        log.error(e.getMessage());
         List<Violation> violations = e.getBindingResult().getFieldErrors().stream()
                 .map(error -> new Violation(error.getField(), error.getDefaultMessage()))
                 .collect(Collectors.toList());
