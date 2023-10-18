@@ -116,7 +116,7 @@ public class ClientService {
     }
 
     private void validateEmail(String email) {
-        String regexPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}$";
+        String regexPattern = "^(\\S+)@([a-z0-9-]+)(\\.)([a-z]{2,4})(\\.?)([a-z]{0,4})+$";
         if (!Pattern.compile(regexPattern).matcher(email).matches()) {
             throw new ContactNotValidException(String.format("Email %s is not valid", email));
         }
