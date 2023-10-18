@@ -8,13 +8,16 @@ import com.github.th.clientsapi.exception.ClientNotFoundException;
 import com.github.th.clientsapi.exception.ContactNotDeterminedException;
 import com.github.th.clientsapi.exception.ContactNotValidException;
 import com.github.th.clientsapi.exception.InvalidContactTypeException;
+import com.github.th.clientsapi.filter.ClientFilterCriteria;
+import com.github.th.clientsapi.filter.ClientSpecifications;
 import com.github.th.clientsapi.mapper.ClientMapper;
 import com.github.th.clientsapi.mapper.ContactMapper;
 import com.github.th.clientsapi.repository.ClientRepository;
 import com.github.th.clientsapi.repository.ContactRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,8 +61,17 @@ public class ClientService {
         throw new ContactNotDeterminedException("Contact not determined");
     }
 
-    public Page<ClientDto> findClients(PageRequest pageRequest) {
-        return clientRepository.findAll(pageRequest).map(clientMapper::toClientDto);
+    public Page<ClientDto> findClients(Long clientId, String firstName, String lastName, String phone, String email,
+                                       Pageable pageable) {
+        ClientFilterCriteria filterCriteria = ClientFilterCriteria.builder()
+                .clientId(clientId)
+                .firstName(firstName)
+                .lastName(lastName)
+                .phone(phone)
+                .email(email)
+                .build();
+        Specification<Client> specification = ClientSpecifications.createClientSpecifications(filterCriteria);
+        return clientRepository.findAll(specification, pageable).map(clientMapper::toClientDto);
     }
 
     public ClientWithContactsDto findClient(long id) {

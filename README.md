@@ -11,7 +11,9 @@ API обеспечивает следующие функции:
 - Добавление нового контакта клиента (телефон или email)\
 `POST http://<host>:<port>/api/clients/<client id>/contacts`
 - Получение списка клиентов\
-`GET http://<host>:<port>/api/clients?offset=0&limit=10`
+`GET http://<host>:<port>/api/clients?page=0&size=10`
+- Получение списка клиентов с фильтрацией по полям\
+`GET http://<host>:<port>/api/clients?clientId=<id>&firstName=<name>&lastName=<name>&phone=<phone>&email=<email>&page=0&size=10`
 - Получение информации по заданному клиенту (по id)\
 `GET http://<host>:<port>/api/clients/<client id>`
 - Получение списка контактов заданного клиента\
