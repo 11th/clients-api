@@ -3,6 +3,7 @@ package com.github.th.clientsapi.controller;
 import com.github.th.clientsapi.dto.ClientDto;
 import com.github.th.clientsapi.dto.ClientWithContactsDto;
 import com.github.th.clientsapi.dto.ContactDto;
+import com.github.th.clientsapi.filter.ClientFilterCriteria;
 import com.github.th.clientsapi.service.ClientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -58,13 +59,8 @@ public class ClientController {
                     implementation = Page.class), mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "400", content = {@Content(schema = @Schema())})
     })
-    public ResponseEntity<Page<ClientDto>> findClients(@RequestParam(value = "clientId", required = false) Long clientId,
-                                                       @RequestParam(value = "firstName", required = false) String firstName,
-                                                       @RequestParam(value = "lastName", required = false) String lastName,
-                                                       @RequestParam(value = "phone", required = false) String phone,
-                                                       @RequestParam(value = "email", required = false) String email,
-                                                       Pageable pageable) {
-        return ResponseEntity.ok(clientService.findClients(clientId, firstName, lastName, phone, email, pageable));
+    public ResponseEntity<Page<ClientDto>> findClients(ClientFilterCriteria filters, Pageable pageable) {
+        return ResponseEntity.ok(clientService.findClients(filters, pageable));
     }
 
     @GetMapping("/{id}")
