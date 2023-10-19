@@ -59,7 +59,7 @@ public class ClientController {
                     implementation = Page.class), mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "400", content = {@Content(schema = @Schema())})
     })
-    public ResponseEntity<Page<ClientDto>> findClients(ClientFilterCriteria filters, Pageable pageable) {
+    public ResponseEntity<Page<ClientDto>> findClients(@Valid ClientFilterCriteria filters, Pageable pageable) {
         return ResponseEntity.ok(clientService.findClients(filters, pageable));
     }
 
