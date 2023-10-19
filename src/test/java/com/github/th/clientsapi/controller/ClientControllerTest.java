@@ -85,115 +85,116 @@ class ClientControllerTest {
 
     @Test
     void addContact_shouldReturnOk() {
-        addOneClient();
+        Client client = addOneClient();
         ContactDto contact = new ContactDto();
         contact.setContactType("PHONE");
         contact.setValue("+79511111111");
         given().contentType(ContentType.JSON).body(contact)
                 .when()
-                .post("/api/clients/1/contacts")
+                .post(String.format("/api/clients/%d/contacts", client.getClientId()))
                 .then()
                 .statusCode(200);
     }
 
     @Test
     void addContact_shouldReturnBadRequest() {
-        addOneClient();
+        Client client = addOneClient();
         ContactDto contact = new ContactDto();
         contact.setContactType("FAX");
         contact.setValue("+79511111111");
         given().contentType(ContentType.JSON).body(contact)
                 .when()
-                .post("/api/clients/1/contacts")
+                .post(String.format("/api/clients/%d/contacts", client.getClientId()))
                 .then()
                 .statusCode(400);
     }
 
     @Test
     void findClients_shouldReturnOk() {
-        addOneClient();
+        Client client = addOneClient();
         given()
                 .contentType(ContentType.JSON)
                 .when()
-                .get("/api/clients?offset=0&limit=10")
+                .get(String.format("/api/clients?clientId=%d&page=0&size=10", client.getClientId()))
                 .then()
                 .statusCode(200);
     }
 
     @Test
     void findClient_shouldReturnOk() {
-        addOneClient();
+        Client client = addOneClient();
         given()
                 .contentType(ContentType.JSON)
                 .when()
-                .get("/api/clients/1")
+                .get(String.format("/api/clients/%d", client.getClientId()))
                 .then()
                 .statusCode(200);
     }
 
     @Test
     void findClient_shouldReturnNotFound() {
-        addOneClient();
+        Client client = addOneClient();
         given()
                 .contentType(ContentType.JSON)
                 .when()
-                .get("/api/clients/2")
+                .get("/api/clients/11")
                 .then()
                 .statusCode(404);
     }
 
     @Test
     void findClientContacts_shouldReturnOk() {
-        addOneClientWithContacts();
+        Client client = addOneClientWithContacts();
         given()
                 .contentType(ContentType.JSON)
                 .when()
-                .get("/api/clients/1/contacts")
+                .get(String.format("/api/clients/%d/contacts", client.getClientId()))
                 .then()
                 .statusCode(200);
     }
 
     @Test
     void findClientPhones_shouldReturnOk() {
-        addOneClientWithContacts();
+        Client client = addOneClientWithContacts();
         given()
                 .contentType(ContentType.JSON)
                 .when()
-                .get("/api/clients/1/contacts?type=phone")
+                .get(String.format("/api/clients/%d/contacts?type=phone", client.getClientId()))
                 .then()
                 .statusCode(200);
     }
 
     @Test
     void findClientEmails_shouldReturnOk() {
-        addOneClientWithContacts();
+        Client client = addOneClientWithContacts();
         given()
                 .contentType(ContentType.JSON)
                 .when()
-                .get("/api/clients/1/contacts?type=email")
+                .get(String.format("/api/clients/%d/contacts?type=email", client.getClientId()))
                 .then()
                 .statusCode(200);
     }
 
     @Test
     void findClientContacts_shouldReturnBadRequest() {
-        addOneClientWithContacts();
+        Client client = addOneClientWithContacts();
         given()
                 .contentType(ContentType.JSON)
                 .when()
-                .get("/api/clients/1/contacts?type=fax")
+                .get(String.format("/api/clients/%d/contacts?type=fax", client.getClientId()))
                 .then()
                 .statusCode(400);
     }
 
-    private void addOneClient() {
+    private Client addOneClient() {
         Client client = new Client();
         client.setFirstName("first");
         client.setLastName("last");
         clientRepository.save(client);
+        return client;
     }
 
-    private void addOneClientWithContacts() {
+    private Client addOneClientWithContacts() {
         Client client = new Client();
         client.setFirstName("first");
         client.setLastName("last");
@@ -206,5 +207,6 @@ class ClientControllerTest {
         email.setClient(client);
         email.setValue("email@domen.ru");
         contactRepository.save(email);
+        return client;
     }
 }

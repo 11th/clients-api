@@ -10,12 +10,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -59,9 +58,13 @@ public class ClientController {
                     implementation = Page.class), mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "400", content = {@Content(schema = @Schema())})
     })
-    public ResponseEntity<Page<ClientDto>> findClients(@RequestParam("offset") @Min(0) Integer offset,
-                                                       @RequestParam("limit") @Min(1) @Max(50) Integer limit) {
-        return ResponseEntity.ok(clientService.findClients(PageRequest.of(offset, limit)));
+    public ResponseEntity<Page<ClientDto>> findClients(@RequestParam(value = "clientId", required = false) Long clientId,
+                                                       @RequestParam(value = "firstName", required = false) String firstName,
+                                                       @RequestParam(value = "lastName", required = false) String lastName,
+                                                       @RequestParam(value = "phone", required = false) String phone,
+                                                       @RequestParam(value = "email", required = false) String email,
+                                                       Pageable pageable) {
+        return ResponseEntity.ok(clientService.findClients(clientId, firstName, lastName, phone, email, pageable));
     }
 
     @GetMapping("/{id}")
