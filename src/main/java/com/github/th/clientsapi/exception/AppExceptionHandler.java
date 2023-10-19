@@ -6,16 +6,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-@ControllerAdvice
+@RestControllerAdvice
 public class AppExceptionHandler {
     @ExceptionHandler(ClientNotFoundException.class)
     public ResponseEntity<Object> handlerClientNotFoundException(RuntimeException e) {
@@ -23,20 +20,11 @@ public class AppExceptionHandler {
         return new ResponseEntity<>(e.getMessage(), new HttpHeaders(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(ContactNotDeterminedException.class)
-    public ResponseEntity<Object> handlerContactNotDeterminedException(RuntimeException e) {
-        log.error(e.getMessage());
-        return new ResponseEntity<>(e.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(InvalidContactTypeException.class)
-    public ResponseEntity<Object> handlerInvalidContactTypeException(RuntimeException e) {
-        log.error(e.getMessage());
-        return new ResponseEntity<>(e.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(ContactNotValidException.class)
-    public ResponseEntity<Object> handlerContactNotValidException(RuntimeException e) {
+    @ExceptionHandler({ContactNotDeterminedException.class,
+            InvalidContactTypeException.class,
+            ContactNotValidException.class
+    })
+    public ResponseEntity<Object> handlerBadRequestException(RuntimeException e) {
         log.error(e.getMessage());
         return new ResponseEntity<>(e.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
