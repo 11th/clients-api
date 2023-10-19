@@ -61,16 +61,8 @@ public class ClientService {
         throw new ContactNotDeterminedException("Contact not determined");
     }
 
-    public Page<ClientDto> findClients(Long clientId, String firstName, String lastName, String phone, String email,
-                                       Pageable pageable) {
-        ClientFilterCriteria filterCriteria = ClientFilterCriteria.builder()
-                .clientId(clientId)
-                .firstName(firstName)
-                .lastName(lastName)
-                .phone(phone)
-                .email(email)
-                .build();
-        Specification<Client> specification = ClientSpecifications.createClientSpecifications(filterCriteria);
+    public Page<ClientDto> findClients(ClientFilterCriteria filters, Pageable pageable) {
+        Specification<Client> specification = ClientSpecifications.createClientSpecifications(filters);
         return clientRepository.findAll(specification, pageable).map(clientMapper::toClientDto);
     }
 
